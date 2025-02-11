@@ -155,6 +155,33 @@
             .add-form input {
                 width: 100%; /* Les champs prennent toute la largeur */
             }
+            table, thead, tbody, th, td, tr {
+                display: block; /* Convertir la table en bloc pour les petits écrans */
+            }
+            th {
+                position: absolute;
+                top: -9999px;
+                left: -9999px; /* Cacher les en-têtes de la table */
+            }
+            tr {
+                border: 1px solid #ccc;
+                margin-bottom: 10px; /* Espacement entre les lignes */
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%; /* Décalage pour les labels */
+            }
+            td:before {
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                content: attr(data-label); /* Afficher les labels */
+                font-weight: bold;
+            }
         }
     </style>
 </head>
@@ -168,7 +195,7 @@
         <!-- Section pour le total d'or, d'argent et de cuivre -->
         <div class="total-money">
             <div>
-                <label for="total_gold">Or du groupe :</label>
+                <label for="total_gold">Or total :</label>
                 <input type="number" id="total_gold" name="total_gold" min="0" required onchange="updateTotal('gold')" value="{{ totals.gold }}">
                 <div class="money-controls">
                     <input type="number" id="add_gold" placeholder="" min="0">
@@ -177,7 +204,7 @@
                 </div>
             </div>
             <div>
-                <label for="total_silver">Argent du groupe :</label>
+                <label for="total_silver">Argent total :</label>
                 <input type="number" id="total_silver" name="total_silver" min="0" required onchange="updateTotal('silver')" value="{{ totals.silver }}">
                 <div class="money-controls">
                     <input type="number" id="add_silver" placeholder="" min="0">
@@ -186,7 +213,7 @@
                 </div>
             </div>
             <div>
-                <label for="total_copper">Cuivre du groupe :</label>
+                <label for="total_copper">Cuivre total :</label>
                 <input type="number" id="total_copper" name="total_copper" min="0" required onchange="updateTotal('copper')" value="{{ totals.copper }}">
                 <div class="money-controls">
                     <input type="number" id="add_copper" placeholder="" min="0">
@@ -199,48 +226,52 @@
 
         <!-- Liste des joueurs -->
         <table id="players-table">
-            <tr>
-                <th></th>
-                <th>Nom</th>
-                <th>Or</th>
-                <th>Argent</th>
-                <th>Cuivre</th>
-            </tr>
-            {% for player, money in players.items() %}
-            <tr id="player-{{ player }}">
-                <td>
-                    <button class="delete-button" onclick="deletePlayer('{{ player }}')">🗑️</button>
-                </td>
-                <td>
-                    <input type="text" class="editable-name" id="name-{{ player }}" value="{{ player }}" onchange="updateName('{{ player }}')">
-                </td>
-                <td>
-                    <input type="number" class="editable-money" id="{{ player }}-gold" value="{{ money['gold'] }}" onchange="updateMoneyDirect('{{ player }}', 'gold')">
-                </td>
-                <td>
-                    <input type="number" class="editable-money" id="{{ player }}-silver" value="{{ money['silver'] }}" onchange="updateMoneyDirect('{{ player }}', 'silver')">
-                </td>
-                <td>
-                    <input type="number" class="editable-money" id="{{ player }}-copper" value="{{ money['copper'] }}" onchange="updateMoneyDirect('{{ player }}', 'copper')">
-                </td>
-            </tr>
-            <tr class="add-row">
-                <td colspan="2"></td>
-                <td>
-                    <input type="number" id="add-gold-{{ player }}" placeholder="" min="0">
-                </td>
-                <td>
-                    <input type="number" id="add-silver-{{ player }}" placeholder="" min="0">
-                </td>
-                <td>
-                    <input type="number" id="add-copper-{{ player }}" placeholder="" min="0">
-                </td>
-                <td>
-                    <button type="button" onclick="addMoney('{{ player }}')">Ajouter</button>
-                    <button type="button" onclick="spendMoney('{{ player }}')">Dépenser 💸</button>
-                </td>
-            </tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Nom</th>
+                    <th>Or</th>
+                    <th>Argent</th>
+                    <th>Cuivre</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player, money in players.items() %}
+                <tr id="player-{{ player }}">
+                    <td data-label="Actions">
+                        <button class="delete-button" onclick="deletePlayer('{{ player }}')">🗑️</button>
+                    </td>
+                    <td data-label="Nom">
+                        <input type="text" class="editable-name" id="name-{{ player }}" value="{{ player }}" onchange="updateName('{{ player }}')">
+                    </td>
+                    <td data-label="Or">
+                        <input type="number" class="editable-money" id="{{ player }}-gold" value="{{ money['gold'] }}" onchange="updateMoneyDirect('{{ player }}', 'gold')">
+                    </td>
+                    <td data-label="Argent">
+                        <input type="number" class="editable-money" id="{{ player }}-silver" value="{{ money['silver'] }}" onchange="updateMoneyDirect('{{ player }}', 'silver')">
+                    </td>
+                    <td data-label="Cuivre">
+                        <input type="number" class="editable-money" id="{{ player }}-copper" value="{{ money['copper'] }}" onchange="updateMoneyDirect('{{ player }}', 'copper')">
+                    </td>
+                </tr>
+                <tr class="add-row">
+                    <td colspan="2" data-label="Actions"></td>
+                    <td data-label="Ajouter Or">
+                        <input type="number" id="add-gold-{{ player }}" placeholder="" min="0">
+                    </td>
+                    <td data-label="Ajouter Argent">
+                        <input type="number" id="add-silver-{{ player }}" placeholder="" min="0">
+                    </td>
+                    <td data-label="Ajouter Cuivre">
+                        <input type="number" id="add-copper-{{ player }}" placeholder="" min="0">
+                    </td>
+                    <td data-label="Actions">
+                        <button type="button" onclick="addMoney('{{ player }}')">Ajouter</button>
+                        <button type="button" onclick="spendMoney('{{ player }}')">Dépenser 💸</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
 
         <!-- Ajouter un joueur -->
