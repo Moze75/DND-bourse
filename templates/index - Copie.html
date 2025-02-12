@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Fortune D&D</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 12px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .dnd-logo {
+            width: 50px;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.4em;
+        }
+        .section-title {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 6px;
+            margin: 25px 0 15px;
+            font-size: 1.2em;
+        }
+        .currency-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .currency-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .currency-label {
+            min-width: 80px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 0.95em;
+        }
+        .currency-value {
+            font-weight: bold;
+            color: #27ae60;
+            min-width: 40px;
+            text-align: right;
+        }
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            width: 80px;
+            font-size: 0.9em;
+        }
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: filter 0.2s;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .btn:hover {
+            filter: brightness(90%);
+        }
+        .btn-add {
+            background: #2ecc71;
+            color: white;
+        }
+        .btn-spend {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-delete {
+            background: #95a5a6;
+            color: white;
+        }
+        .player-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+        .player-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .player-name input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-width: 120px;
+        }
+        .add-player-form {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            .currency-row {
+                gap: 6px;
+            }
+            .btn {
+                padding: 6px 10px;
+            }
+            input[type="number"] {
+                width: 70px;
+            }
+            .mobile-right {
+                margin-left: auto;
+                display: flex;
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='dnd.jpg') }}" alt="Logo D&D" class="dnd-logo">
+            <h1>Gestionnaire de Fortune<br><small>Campagne D&D</small></h1>
+        </div>
+
+        <!-- Fortune de groupe -->
+        <h2 class="section-title">Fortune de groupe</h2>
+        <div class="currency-group">
+            <!-- Or -->
+            <div class="currency-row">
+                <span class="currency-label">Or</span>
+                <span class="currency-value">{{ totals.gold }}</span>
+                <input type="number" id="add_gold" placeholder="Montant">
+                <div class="mobile-right">
+                    <button class="btn btn-add" onclick="addToTotal('gold')">Ajouter</button>
+                    <button class="btn btn-spend" onclick="spendFromTotal('gold')">Dépenser</button>
+                </div>
+            </div>
+            
+            <!-- Argent -->
+            <div class="currency-row">
+                <span class="currency-label">Argent</span>
+                <span class="currency-value">{{ totals.silver }}</span>
+                <input type="number" id="add_silver" placeholder="Montant">
+                <div class="mobile-right">
+                    <button class="btn btn-add" onclick="addToTotal('silver')">Ajouter</button>
+                    <button class="btn btn-spend" onclick="spendFromTotal('silver')">Dépenser</button>
+                </div>
+            </div>
+            
+            <!-- Cuivre -->
+            <div class="currency-row">
+                <span class="currency-label">Cuivre</span>
+                <span class="currency-value">{{ totals.copper }}</span>
+                <input type="number" id="add_copper" placeholder="Montant">
+                <div class="mobile-right">
+                    <button class="btn btn-add" onclick="addToTotal('copper')">Ajouter</button>
+                    <button class="btn btn-spend" onclick="spendFromTotal('copper')">Dépenser</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn" style="background: #3498db; color: white; width: 100%; margin: 15px 0;" 
+                onclick="shareMoney()">
+            🔄 Partager équitablement
+        </button>
+
+        <!-- Fortunes individuelles -->
+        <h2 class="section-title">Fortunes individuelles</h2>
+        
+        {% for player, money in players.items() %}
+        <div class="player-card">
+            <div class="player-header">
+                <input type="text" value="{{ player }}" 
+                       onchange="updateName('{{ player }}', this.value)"
+                       class="player-name">
+                <button class="btn btn-delete" onclick="deletePlayer('{{ player }}')">🗑️ Supprimer</button>
+            </div>
+            
+            <!-- Or -->
+            <div class="currency-row">
+                <span class="currency-label">Or</span>
+                <span class="currency-value">{{ money.gold }}</span>
+                <input type="number" id="add-gold-{{ player }}" placeholder="Montant">
+                <div class="mobile-right">
+                    <button class="btn btn-add" onclick="addMoney('{{ player }}', 'gold')">Ajouter</button>
+                    <button class="btn btn-spend" onclick="spendMoney('{{ player }}', 'gold')">Dépenser</button>
+                </div>
+            </div>
+            
+            <!-- Argent -->
+            <div class="currency-row">
+                <span class="currency-label">Argent</span>
+                <span class="currency-value">{{ money.silver }}</span>
+                <input type="number" id="add-silver-{{ player }}" placeholder="Montant">
+                <div class="mobile-right">
+                    <button class="btn btn-add" onclick="addMoney('{{ player }}', 'silver')">Ajouter</button>
+                    <button class="btn btn-spend" onclick="spendMoney('{{ player }}', 'silver')">Dépenser</button>
+                </div>
+            </div>
+            
+            <!-- Cuivre -->
+            <div class="currency-row">
+                <span class="currency-label">Cuivre</span>
+                <span class="currency-value">{{ money.copper }}</span>
+                <input type="number" id="add-copper-{{ player }}" placeholder="Montant">
+                <div class="mobile-right">
+                    <button class="btn btn-add" onclick="addMoney('{{ player }}', 'copper')">Ajouter</button>
+                    <button class="btn btn-spend" onclick="spendMoney('{{ player }}', 'copper')">Dépenser</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Formulaire d'ajout -->
+        <div class="add-player-form">
+            <h3>Ajouter un joueur</h3>
+            <input type="text" id="new_player_name" placeholder="Nom du joueur" 
+                   style="width: 100%; padding: 8px; margin-bottom: 10px;">
+            <button class="btn btn-add" style="width: 100%;" onclick="addPlayer()">
+                🪄 Créer joueur
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Fonctions corrigées et testées
+        async function addToTotal(currency) {
+            const input = document.getElementById(`add_${currency}`);
+            const amount = parseInt(input.value) || 0;
+            
+            await fetch('/add_to_total', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `currency=${currency}&amount=${amount}`
+            });
+            
+            input.value = '';
+            location.reload();
+        }
+
+        async function spendFromTotal(currency) {
+            const input = document.getElementById(`add_${currency}`);
+            const amount = parseInt(input.value) || 0;
+            
+            await fetch('/spend_from_total', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `currency=${currency}&amount=${amount}`
+            });
+            
+            input.value = '';
+            location.reload();
+        }
+
+        async function addMoney(player, currency) {
+            const input = document.getElementById(`add-${currency}-${player}`);
+            const amount = parseInt(input.value) || 0;
+            
+            await fetch('/add_money', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `player_name=${encodeURIComponent(player)}&currency=${currency}&amount=${amount}`
+            });
+            
+            input.value = '';
+            location.reload();
+        }
+
+        async function spendMoney(player, currency) {
+            const input = document.getElementById(`add-${currency}-${player}`);
+            const amount = parseInt(input.value) || 0;
+            
+            await fetch('/spend_money', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `player_name=${encodeURIComponent(player)}&currency=${currency}&amount=${amount}`
+            });
+            
+            input.value = '';
+            location.reload();
+        }
+
+        async function deletePlayer(player) {
+            await fetch('/delete_player', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `player_name=${encodeURIComponent(player)}`
+            });
+            location.reload();
+        }
+
+        async function addPlayer() {
+            const input = document.getElementById('new_player_name');
+            await fetch('/add_player', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `player_name=${encodeURIComponent(input.value)}`
+            });
+            input.value = '';
+            location.reload();
+        }
+
+        async function updateName(oldName, newName) {
+            await fetch('/update_name', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `old_name=${encodeURIComponent(oldName)}&new_name=${encodeURIComponent(newName)}`
+            });
+            location.reload();
+        }
+
+        async function shareMoney() {
+            await fetch('/split_money', { method: 'POST' });
+            location.reload();
+        }
+    </script>
+</body>
+</html>
