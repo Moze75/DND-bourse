@@ -1,16 +1,16 @@
 {
     "Riane": {
-        "gold": 15,
+        "gold": 5,
         "silver": 0,
-        "copper": 7
+        "copper": 0
     },
     "Philom\u00e8ne": {
-        "gold": 25,
+        "gold": 5,
         "silver": 0,
-        "copper": 7
+        "copper": 0
     },
     "bobo": {
-        "gold": 0,
+        "gold": 5,
         "silver": 0,
         "copper": 0
     }
