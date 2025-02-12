@@ -3,371 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bourse de l'équipe</title>
+    <title>Gestion de fortune - D&D</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
             margin: 0;
-            padding: 10px;
-        }
-        h1, h2 {
-            color: #444;
-            text-align: center;
+            padding: 20px;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
             background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .header {
+        h1 {
+            color: #2c3e50;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
-        .header img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
+        .section-title {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin: 40px 0 25px;
+            font-size: 1.4em;
         }
-        .total-money {
-            margin-bottom: 20px;
+        .currency-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
         }
-        .total-money .currency-block {
-            background-color: #f8f8f8;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .total-money label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .total-money input {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 5px;
-        }
-        .total-money .money-controls {
-            display: flex;
-            gap: 5px;
-        }
-        .total-money .money-controls button {
-            flex: 1;
-            padding: 6px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .total-money .money-controls button:hover {
-            background-color: #0056b3;
-        }
-        .player-block {
-            background-color: #f8f8f8;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .player-block .player-header {
+        .currency-row {
             display: flex;
             align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .currency-label {
+            min-width: 120px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .currency-value {
+            font-weight: bold;
+            color: #27ae60;
+            min-width: 60px;
+        }
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            width: 100px;
+            font-size: 1em;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            font-size: 0.95em;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-add {
+            background: #2ecc71;
+            color: white;
+        }
+        .btn-spend {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-delete {
+            background: #95a5a6;
+            color: white;
+        }
+        .player-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .player-header {
+            display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .player-block .player-header input {
-            flex: 1;
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-        .player-block .player-header button {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 6px 10px;
-            cursor: pointer;
-        }
-        .player-block .player-header button:hover {
-            background-color: #c82333;
-        }
-        .player-block .currency-row {
-            display: flex;
             align-items: center;
-            gap: 5px;
-            margin-bottom: 5px;
+            margin-bottom: 20px;
         }
-        .player-block .currency-row label {
-            flex: 1;
-            font-weight: bold;
-        }
-        .player-block .currency-row input {
-            width: 60px;
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .player-block .currency-row .money-controls {
-            display: flex;
-            gap: 5px;
-        }
-        .player-block .currency-row .money-controls button {
-            padding: 6px 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .player-block .currency-row .money-controls button:hover {
-            background-color: #218838;
+        .player-name input {
+            font-size: 1.2em;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 200px;
         }
         .add-player-form {
-            margin-top: 20px;
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
         }
-        .add-player-form input {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .add-player-form button {
+        .new-player-input {
             width: 100%;
             padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .add-player-form button:hover {
-            background-color: #218838;
+            margin-bottom: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1em;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Bourse de l'équipe 🐉</h1>
-            <img src="{{ url_for('static', filename='dnd.jpg') }}" alt="D&D Image">
+        <h1>💰 Gestionnaire de Fortune - D&D</h1>
+        
+        <!-- Fortune de groupe -->
+        <h2 class="section-title">Fortune Collective</h2>
+        <div class="currency-group">
+            <!-- Or -->
+            <div class="currency-row">
+                <span class="currency-label">Or total :</span>
+                <span class="currency-value" id="total_gold">{{ totals.gold }}</span>
+                <input type="number" id="add_gold" placeholder="Montant">
+                <button class="btn btn-add" onclick="addToTotal('gold')">Ajouter</button>
+                <button class="btn btn-spend" onclick="spendFromTotal('gold')">Dépenser</button>
+            </div>
+            
+            <!-- Argent -->
+            <div class="currency-row">
+                <span class="currency-label">Argent total :</span>
+                <span class="currency-value" id="total_silver">{{ totals.silver }}</span>
+                <input type="number" id="add_silver" placeholder="Montant">
+                <button class="btn btn-add" onclick="addToTotal('silver')">Ajouter</button>
+                <button class="btn btn-spend" onclick="spendFromTotal('silver')">Dépenser</button>
+            </div>
+            
+            <!-- Cuivre -->
+            <div class="currency-row">
+                <span class="currency-label">Cuivre total :</span>
+                <span class="currency-value" id="total_copper">{{ totals.copper }}</span>
+                <input type="number" id="add_copper" placeholder="Montant">
+                <button class="btn btn-add" onclick="addToTotal('copper')">Ajouter</button>
+                <button class="btn btn-spend" onclick="spendFromTotal('copper')">Dépenser</button>
+            </div>
         </div>
 
-        <!-- Section pour le total d'or, d'argent et de cuivre -->
-        <div class="total-money">
-            <div class="currency-block">
-                <label for="total_gold">Or total :</label>
-                <input type="number" id="total_gold" name="total_gold" min="0" required onchange="updateTotal('gold')" value="{{ totals.gold }}" readonly>
-                <div class="money-controls">
-                    <input type="number" id="add_gold" placeholder="" min="0">
-                    <button type="button" onclick="addToTotal('gold')">Ajouter</button>
-                    <button type="button" onclick="spendFromTotal('gold')">Dépenser</button>
-                </div>
-            </div>
-            <div class="currency-block">
-                <label for="total_silver">Argent total :</label>
-                <input type="number" id="total_silver" name="total_silver" min="0" required onchange="updateTotal('silver')" value="{{ totals.silver }}" readonly>
-                <div class="money-controls">
-                    <input type="number" id="add_silver" placeholder="" min="0">
-                    <button type="button" onclick="addToTotal('silver')">Ajouter</button>
-                    <button type="button" onclick="spendFromTotal('silver')">Dépenser</button>
-                </div>
-            </div>
-            <div class="currency-block">
-                <label for="total_copper">Cuivre total :</label>
-                <input type="number" id="total_copper" name="total_copper" min="0" required onchange="updateTotal('copper')" value="{{ totals.copper }}" readonly>
-                <div class="money-controls">
-                    <input type="number" id="add_copper" placeholder="" min="0">
-                    <button type="button" onclick="addToTotal('copper')">Ajouter</button>
-                    <button type="button" onclick="spendFromTotal('copper')">Dépenser</button>
-                </div>
-            </div>
-            <button type="button" onclick="shareMoney()" style="width: 100%; padding: 10px; margin-top: 10px;">Partager 🔄</button>
-        </div>
+        <button class="btn" style="background: #3498db; color: white; width: 100%; padding: 12px; margin: 25px 0;" 
+                onclick="shareMoney()">
+            🔄 Répartir équitablement
+        </button>
 
-        <!-- Liste des joueurs -->
+        <!-- Fortune individuelle -->
+        <h2 class="section-title">Fortunes Individuelles</h2>
+        
         {% for player, money in players.items() %}
-        <div class="player-block">
+        <div class="player-card">
             <div class="player-header">
-                <input type="text" class="editable-name" id="name-{{ player }}" value="{{ player }}" onchange="updateName('{{ player }}')">
-                <button class="delete-button" onclick="deletePlayer('{{ player }}')">🗑️</button>
-            </div>
-            <div class="currency-row">
-                <label>Or :</label>
-                <input type="number" class="editable-money" id="{{ player }}-gold" value="{{ money['gold'] }}" readonly>
-                <div class="money-controls">
-                    <input type="number" id="add-gold-{{ player }}" placeholder="" min="0">
-                    <button type="button" onclick="addMoney('{{ player }}', 'gold')">Ajouter</button>
-                    <button type="button" onclick="spendMoney('{{ player }}', 'gold')">Dépenser</button>
+                <div class="player-name">
+                    <input type="text" value="{{ player }}" 
+                           onchange="updateName('{{ player }}', this.value)">
                 </div>
+                <button class="btn btn-delete" onclick="deletePlayer('{{ player }}')">🗑️ Supprimer</button>
             </div>
+            
+            <!-- Or -->
             <div class="currency-row">
-                <label>Argent :</label>
-                <input type="number" class="editable-money" id="{{ player }}-silver" value="{{ money['silver'] }}" readonly>
-                <div class="money-controls">
-                    <input type="number" id="add-silver-{{ player }}" placeholder="" min="0">
-                    <button type="button" onclick="addMoney('{{ player }}', 'silver')">Ajouter</button>
-                    <button type="button" onclick="spendMoney('{{ player }}', 'silver')">Dépenser</button>
-                </div>
+                <span class="currency-label">Or :</span>
+                <span class="currency-value">{{ money.gold }}</span>
+                <input type="number" id="add-gold-{{ player }}" placeholder="Montant">
+                <button class="btn btn-add" onclick="addMoney('{{ player }}', 'gold')">+</button>
+                <button class="btn btn-spend" onclick="spendMoney('{{ player }}', 'gold')">-</button>
             </div>
+            
+            <!-- Argent -->
             <div class="currency-row">
-                <label>Cuivre :</label>
-                <input type="number" class="editable-money" id="{{ player }}-copper" value="{{ money['copper'] }}" readonly>
-                <div class="money-controls">
-                    <input type="number" id="add-copper-{{ player }}" placeholder="" min="0">
-                    <button type="button" onclick="addMoney('{{ player }}', 'copper')">Ajouter</button>
-                    <button type="button" onclick="spendMoney('{{ player }}', 'copper')">Dépenser</button>
-                </div>
+                <span class="currency-label">Argent :</span>
+                <span class="currency-value">{{ money.silver }}</span>
+                <input type="number" id="add-silver-{{ player }}" placeholder="Montant">
+                <button class="btn btn-add" onclick="addMoney('{{ player }}', 'silver')">+</button>
+                <button class="btn btn-spend" onclick="spendMoney('{{ player }}', 'silver')">-</button>
+            </div>
+            
+            <!-- Cuivre -->
+            <div class="currency-row">
+                <span class="currency-label">Cuivre :</span>
+                <span class="currency-value">{{ money.copper }}</span>
+                <input type="number" id="add-copper-{{ player }}" placeholder="Montant">
+                <button class="btn btn-add" onclick="addMoney('{{ player }}', 'copper')">+</button>
+                <button class="btn btn-spend" onclick="spendMoney('{{ player }}', 'copper')">-</button>
             </div>
         </div>
         {% endfor %}
 
-        <!-- Ajouter un joueur -->
-        <h2>Ajouter un joueur</h2>
-        <form class="add-player-form" id="add-player-form" onsubmit="event.preventDefault(); addPlayer();">
-            <input type="text" id="player_name" name="player_name" placeholder="Nom du joueur" required>
-            <button type="submit">🪄 Ajouter</button>
-        </form>
+        <!-- Formulaire d'ajout -->
+        <div class="add-player-form">
+            <h3>Ajouter un nouveau joueur</h3>
+            <input type="text" id="new_player_name" class="new-player-input" placeholder="Nom du joueur">
+            <button class="btn btn-add" style="width: 100%; padding: 12px;" onclick="addPlayer()">
+                🪄 Créer le joueur
+            </button>
+        </div>
     </div>
 
     <script>
-        // Fonction pour ajouter un joueur
-        async function addPlayer() {
-            const playerName = document.getElementById('player_name').value;
-            const response = await fetch('/add_player', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `player_name=${playerName}`,
-            });
-
-            if (response.ok) {
-                location.reload();
-            }
-        }
-
-        // Fonction pour ajouter de la valeur aux totaux
+        // Fonctions pour la fortune collective
         async function addToTotal(currency) {
             const amount = parseInt(document.getElementById(`add_${currency}`).value) || 0;
-            const response = await fetch('/add_to_total', {
+            await fetch('/add_to_total', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `currency=${currency}&amount=${amount}`,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `currency=${currency}&amount=${amount}`
             });
-
-            if (response.ok) {
-                location.reload();
-            }
+            location.reload();
         }
 
-        // Fonction pour dépenser de la valeur des totaux
         async function spendFromTotal(currency) {
             const amount = parseInt(document.getElementById(`add_${currency}`).value) || 0;
-            const response = await fetch('/spend_from_total', {
+            await fetch('/spend_from_total', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `currency=${currency}&amount=${amount}`,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `currency=${currency}&amount=${amount}`
             });
-
-            if (response.ok) {
-                location.reload();
-            }
+            location.reload();
         }
 
-        // Fonction pour partager l'argent
-        async function shareMoney() {
-            const totalGold = parseInt(document.getElementById('total_gold').value) || 0;
-            const totalSilver = parseInt(document.getElementById('total_silver').value) || 0;
-            const totalCopper = parseInt(document.getElementById('total_copper').value) || 0;
-
-            const response = await fetch('/split_money', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `total_gold=${totalGold}&total_silver=${totalSilver}&total_copper=${totalCopper}`,
-            });
-
-            if (response.ok) {
-                location.reload();
-            }
-        }
-
-        // Fonction pour ajouter de l'argent à un joueur
+        // Fonctions pour les joueurs
         async function addMoney(player, currency) {
-            const amount = parseInt(document.getElementById(`add-${currency}-${player}`).value) || 0;
-            const response = await fetch('/add_money', {
+            const input = document.getElementById(`add-${currency}-${player}`);
+            const amount = parseInt(input.value) || 0;
+            
+            await fetch('/add_money', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `player_name=${player}&${currency}=${amount}`,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `player_name=${encodeURIComponent(player)}&currency=${currency}&amount=${amount}`
             });
-
-            if (response.ok) {
-                location.reload();
-            }
+            
+            input.value = '';
+            location.reload();
         }
 
-        // Fonction pour dépenser de l'argent d'un joueur
         async function spendMoney(player, currency) {
-            const amount = parseInt(document.getElementById(`add-${currency}-${player}`).value) || 0;
-            const response = await fetch('/spend_money', {
+            const input = document.getElementById(`add-${currency}-${player}`);
+            const amount = parseInt(input.value) || 0;
+            
+            await fetch('/spend_money', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `player_name=${player}&${currency}=${amount}`,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `player_name=${encodeURIComponent(player)}&currency=${currency}&amount=${amount}`
             });
-
-            if (response.ok) {
-                location.reload();
-            }
+            
+            input.value = '';
+            location.reload();
         }
 
-        // Fonction pour supprimer un joueur
+        // Gestion des joueurs
         async function deletePlayer(player) {
-            const response = await fetch('/delete_player', {
+            await fetch('/delete_player', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `player_name=${player}`,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `player_name=${encodeURIComponent(player)}`
             });
-
-            if (response.ok) {
-                location.reload();
-            }
+            location.reload();
         }
 
-        // Fonction pour mettre à jour le nom d'un joueur
-        async function updateName(oldName) {
-            const newName = document.getElementById(`name-${oldName}`).value;
-            const response = await fetch('/update_name', {
+        async function addPlayer() {
+            const name = document.getElementById('new_player_name').value;
+            await fetch('/add_player', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `old_name=${oldName}&new_name=${newName}`,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `player_name=${encodeURIComponent(name)}`
             });
+            document.getElementById('new_player_name').value = '';
+            location.reload();
+        }
 
-            if (response.ok) {
-                location.reload();
-            }
+        async function updateName(oldName, newName) {
+            await fetch('/update_name', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `old_name=${encodeURIComponent(oldName)}&new_name=${encodeURIComponent(newName)}`
+            });
+            location.reload();
+        }
+
+        // Partage de la fortune
+        async function shareMoney() {
+            await fetch('/split_money', { method: 'POST' });
+            location.reload();
         }
     </script>
 </body>
